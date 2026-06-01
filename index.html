@@ -865,10 +865,10 @@
   <!-- ── HERO ───────────────────────────────────────── -->
   <section id="hero" role="banner" aria-label="Zaopatrzenie dla Twojego Sklepu">
     <div class="hero-slides" aria-hidden="true">
-      <div class="hero-slide active kb-0"></div>
-      <div class="hero-slide kb-1"></div>
-      <div class="hero-slide kb-2"></div>
-      <div class="hero-slide kb-3"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
     </div>
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-progress" aria-hidden="true"><div class="hero-progress-bar" id="heroBar"></div></div>
@@ -1120,64 +1120,66 @@
   <script>
     // ── Hero slideshow
     (function() {
-      const DURATION = 5000; // ms na slajd
+      const IMGS     = ['img/hero.jpg','img/ciasta.jpg','img/miesowedliny.jpg','img/garmazeria.jpg'];
+      const KB_ANIM  = ['kbZoomIn','kbZoomOut','kbPanLeft','kbPanRight'];
+      const DURATION = 5500;
       const slides   = document.querySelectorAll('.hero-slide');
       const dots     = document.querySelectorAll('.hero-dot');
       const bar      = document.getElementById('heroBar');
-      const kbClass  = ['kb-0','kb-1','kb-2','kb-3'];
       let current    = 0;
-      let timer, barTimer;
+      let timer;
 
-      function goTo(idx) {
-        // Reset poprzedniego
-        slides[current].classList.remove('active', ...kbClass);
-        dots[current].classList.remove('active');
+      // Przypisz tła raz
+      slides.forEach((s, i) => { s.style.backgroundImage = "url('" + IMGS[i] + "')"; });
 
+      // Preload wszystkich obrazów
+      IMGS.forEach(src => { const img = new Image(); img.src = src; });
+
+      function activate(idx) {
+        const prev = current;
         current = idx;
 
-        // Aktywuj nowy
-        slides[current].classList.add('active', kbClass[current]);
+        // Ukryj poprzedni
+        slides[prev].style.opacity = '0';
+        slides[prev].style.animation = 'none';
+        dots[prev].classList.remove('active');
+
+        // Pokaż nowy — wymuś reflow żeby Ken Burns restartował
+        const s = slides[current];
+        s.style.animation = 'none';
+        s.offsetWidth; // reflow
+        s.style.opacity = '1';
+        s.style.animation = KB_ANIM[current] + ' 10s ease-in-out both';
         dots[current].classList.add('active');
 
-        // Pasek postępu
+        // Progress bar
         bar.style.transition = 'none';
         bar.style.width = '0%';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            bar.style.transition = `width ${DURATION}ms linear`;
-            bar.style.width = '100%';
-          });
-        });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          bar.style.transition = 'width ' + DURATION + 'ms linear';
+          bar.style.width = '100%';
+        }));
       }
 
-      function next() {
-        goTo((current + 1) % slides.length);
-      }
+      // Usuń class-based opacity — używamy inline style
+      slides.forEach(s => { s.style.opacity = '0'; });
 
-      function start() {
+      // Start
+      activate(0);
+      timer = setInterval(() => activate((current + 1) % slides.length), DURATION);
+
+      // Doty
+      dots.forEach(dot => dot.addEventListener('click', () => {
         clearInterval(timer);
-        timer = setInterval(next, DURATION);
-        goTo(current);
-      }
-
-      // Klik na doty
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          clearInterval(timer);
-          goTo(parseInt(dot.dataset.idx));
-          timer = setInterval(next, DURATION);
-        });
-      });
+        activate(parseInt(dot.dataset.idx));
+        timer = setInterval(() => activate((current + 1) % slides.length), DURATION);
+      }));
 
       // Pauza na hover
-      const hero = document.getElementById('hero');
-      hero.addEventListener('mouseenter', () => clearInterval(timer));
-      hero.addEventListener('mouseleave', () => {
-        timer = setInterval(next, DURATION);
+      document.getElementById('hero').addEventListener('mouseenter', () => clearInterval(timer));
+      document.getElementById('hero').addEventListener('mouseleave', () => {
+        timer = setInterval(() => activate((current + 1) % slides.length), DURATION);
       });
-
-      // Start po wczytaniu
-      start();
     })();
 
     // ── Splash screen
