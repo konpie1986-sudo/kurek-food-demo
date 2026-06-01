@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://kurek-food.pl/</loc>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://kurek-food.pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kurek-food.pl/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kurek-food.pl/"/>
+    <lastmod>2025-06-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://kurek-food.pl/img/hero.jpg</image:loc>
+      <image:title>Kurek Food – Hurtownia Spożywcza B2B</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://kurek-food.pl/img/ciasta.jpg</image:loc>
+      <image:title>Ciasta domowe własnej produkcji – Kurek Food</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://kurek-food.pl/img/miesowedliny.jpg</image:loc>
+      <image:title>Mięso i wędliny hurtownia – Kurek Food</image:title>
+    </image:image>
+  </url>
+</urlset>

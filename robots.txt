@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /img/
+
+Sitemap: https://kurek-food.pl/sitemap.xml
+Sitemap: https://kurek-food.kingpromotion.pl/sitemap.xml
