@@ -691,14 +691,77 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ─── KEN BURNS na hero bg ───────────────────────── */
-    .hero-bg {
-      animation: kenBurns 12s ease-in-out infinite alternate;
-      transform-origin: center center;
+    /* ─── HERO SLIDESHOW ─────────────────────────────── */
+    .hero-slides {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
     }
-    @keyframes kenBurns {
-      from { transform: scale(1);    }
-      to   { transform: scale(1.08); }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s ease-in-out;
+      will-change: transform, opacity;
+    }
+    .hero-slide.active { opacity: 1; }
+
+    .hero-slide:nth-child(1) { background-image: url('img/hero.jpg'); }
+    .hero-slide:nth-child(2) { background-image: url('img/ciasta.jpg'); }
+    .hero-slide:nth-child(3) { background-image: url('img/miesowedliny.jpg'); }
+    .hero-slide:nth-child(4) { background-image: url('img/garmazeria.jpg'); }
+
+    /* 4 różne kierunki Ken Burns */
+    .hero-slide.active.kb-0 { animation: kbZoomIn    10s ease-in-out both; }
+    .hero-slide.active.kb-1 { animation: kbZoomOut   10s ease-in-out both; }
+    .hero-slide.active.kb-2 { animation: kbPanLeft   10s ease-in-out both; }
+    .hero-slide.active.kb-3 { animation: kbPanRight  10s ease-in-out both; }
+
+    @keyframes kbZoomIn    { from { transform: scale(1);            } to { transform: scale(1.1);           } }
+    @keyframes kbZoomOut   { from { transform: scale(1.1);          } to { transform: scale(1);             } }
+    @keyframes kbPanLeft   { from { transform: scale(1.08) translateX(3%);  } to { transform: scale(1.08) translateX(-3%); } }
+    @keyframes kbPanRight  { from { transform: scale(1.08) translateX(-3%); } to { transform: scale(1.08) translateX(3%);  } }
+
+    /* Pasek postępu */
+    .hero-progress {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: rgba(255,255,255,.15);
+      z-index: 2;
+    }
+    .hero-progress-bar {
+      height: 100%;
+      background: var(--brand);
+      width: 0%;
+      transition: width linear;
+    }
+
+    /* Dot nawigacja */
+    .hero-dots {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      gap: 8px;
+    }
+    .hero-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.35);
+      cursor: pointer;
+      transition: background .3s, transform .3s;
+      border: none;
+      padding: 0;
+    }
+    .hero-dot.active {
+      background: var(--white);
+      transform: scale(1.4);
     }
 
     /* ─── ANIMATIONS ─────────────────────────────────── */
@@ -801,8 +864,20 @@
 
   <!-- ── HERO ───────────────────────────────────────── -->
   <section id="hero" role="banner" aria-label="Zaopatrzenie dla Twojego Sklepu">
-    <div class="hero-bg" role="img" aria-label="Produkty cukiernicze Kurek Food"></div>
+    <div class="hero-slides" aria-hidden="true">
+      <div class="hero-slide active kb-0"></div>
+      <div class="hero-slide kb-1"></div>
+      <div class="hero-slide kb-2"></div>
+      <div class="hero-slide kb-3"></div>
+    </div>
     <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-progress" aria-hidden="true"><div class="hero-progress-bar" id="heroBar"></div></div>
+    <div class="hero-dots" role="tablist" aria-label="Nawigacja slajdów">
+      <button class="hero-dot active" data-idx="0" aria-label="Slajd 1" role="tab"></button>
+      <button class="hero-dot"        data-idx="1" aria-label="Slajd 2" role="tab"></button>
+      <button class="hero-dot"        data-idx="2" aria-label="Slajd 3" role="tab"></button>
+      <button class="hero-dot"        data-idx="3" aria-label="Slajd 4" role="tab"></button>
+    </div>
 
     <div class="hero-content">
       <span class="hero-eyebrow" data-pl>Hurtownia spożywcza B2B</span>
@@ -1043,6 +1118,68 @@
 
   <!-- ── SCRIPTS ─────────────────────────────────────── -->
   <script>
+    // ── Hero slideshow
+    (function() {
+      const DURATION = 5000; // ms na slajd
+      const slides   = document.querySelectorAll('.hero-slide');
+      const dots     = document.querySelectorAll('.hero-dot');
+      const bar      = document.getElementById('heroBar');
+      const kbClass  = ['kb-0','kb-1','kb-2','kb-3'];
+      let current    = 0;
+      let timer, barTimer;
+
+      function goTo(idx) {
+        // Reset poprzedniego
+        slides[current].classList.remove('active', ...kbClass);
+        dots[current].classList.remove('active');
+
+        current = idx;
+
+        // Aktywuj nowy
+        slides[current].classList.add('active', kbClass[current]);
+        dots[current].classList.add('active');
+
+        // Pasek postępu
+        bar.style.transition = 'none';
+        bar.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            bar.style.transition = `width ${DURATION}ms linear`;
+            bar.style.width = '100%';
+          });
+        });
+      }
+
+      function next() {
+        goTo((current + 1) % slides.length);
+      }
+
+      function start() {
+        clearInterval(timer);
+        timer = setInterval(next, DURATION);
+        goTo(current);
+      }
+
+      // Klik na doty
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          clearInterval(timer);
+          goTo(parseInt(dot.dataset.idx));
+          timer = setInterval(next, DURATION);
+        });
+      });
+
+      // Pauza na hover
+      const hero = document.getElementById('hero');
+      hero.addEventListener('mouseenter', () => clearInterval(timer));
+      hero.addEventListener('mouseleave', () => {
+        timer = setInterval(next, DURATION);
+      });
+
+      // Start po wczytaniu
+      start();
+    })();
+
     // ── Splash screen
     (function() {
       const splash = document.getElementById('splash');
