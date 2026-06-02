@@ -480,32 +480,79 @@
     }
 
     .cta-btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
       background: var(--white);
       color: var(--brand);
       font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: clamp(.9rem, 2vw, 1.05rem);
-      letter-spacing: .1em;
+      font-weight: 900;
+      font-size: clamp(1rem, 2.2vw, 1.25rem);
+      letter-spacing: .08em;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 18px 52px;
-      border-radius: 8px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.18);
+      padding: 22px 64px;
+      border-radius: 10px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.25);
       transition: transform .25s, box-shadow .25s, background .25s;
+      position: relative;
+    }
+    .cta-btn::after {
+      content: '→';
+      font-size: 1.3em;
+      transition: transform .25s;
     }
     .cta-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 16px 48px rgba(0,0,0,.28);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 56px rgba(0,0,0,.35);
       background: #fff6f9;
     }
+    .cta-btn:hover::after { transform: translateX(4px); }
 
-    .cta-note {
-      display: block;
-      margin-top: 28px;
-      font-size: .8rem;
+    /* ── Credentials box ── */
+    .cta-credentials {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 36px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 12px;
+      padding: 20px 36px;
+      backdrop-filter: blur(4px);
+    }
+    .cta-credentials-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+    }
+    .cta-credentials-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .92rem;
+    }
+    .cta-credentials-row strong {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: .7rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
       color: rgba(255,255,255,.55);
+      min-width: 52px;
+    }
+    .cta-credentials-row span {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      color: var(--white);
+      background: rgba(0,0,0,.2);
+      padding: 4px 12px;
+      border-radius: 6px;
       letter-spacing: .02em;
+      font-size: .88rem;
     }
 
     /* ─── CONTACT SECTION ────────────────────────────── */
@@ -1020,13 +1067,25 @@
          href="https://beta.b2b.cukiernia-kurek.pl/pl/logowanie"
          target="_blank"
          rel="noopener noreferrer">
-        <span data-pl>Przejdź do zamówień →</span>
-        <span data-en>Go to orders →</span>
+        <span data-pl>Przejdź do platformy B2B</span>
+        <span data-en>Go to B2B platform</span>
       </a>
-      <small class="cta-note">
-        <span data-pl>Skontaktuj się z nami, aby otrzymać dane dostępowe do platformy</span>
-        <span data-en>Contact us to receive access credentials for the platform</span>
-      </small>
+
+      <div class="cta-credentials">
+        <p class="cta-credentials-title">
+          <span data-pl>Dane do logowania jako gość</span>
+          <span data-en>Guest login credentials</span>
+        </p>
+        <div class="cta-credentials-row">
+          <strong>Login</strong>
+          <span>gosc@cukiernia-kurek.pl</span>
+        </div>
+        <div class="cta-credentials-row">
+          <strong data-pl>Hasło</strong>
+          <strong data-en>Password</strong>
+          <span>Kurek123!</span>
+        </div>
+      </div>
     </div>
   </section>
 
