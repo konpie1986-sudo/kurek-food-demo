@@ -1,0 +1,37 @@
+name: Deploy → kurek-food.com
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject B2B credentials (production only)
+        run: |
+          sed -i \
+            's|Skontaktuj się z nami, aby otrzymać dane dostępowe|<div class="cta-credentials-row"><strong>Login<\/strong><span>${{ secrets.B2B_LOGIN }}<\/span><\/div><div class="cta-credentials-row"><strong>Hasło<\/strong><span>${{ secrets.B2B_PASSWORD }}<\/span><\/div>|g' \
+            index.html
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: kurekcuk.ftp.dhosting.pl
+          username: uyoo4u_kurekfoo
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /kurek-food.com/public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/DOSTEPY.txt
+            **/dane kontaktowe/**
+            **/logo/**
+            **/fav icon/**
+            **/zdjęcia produktów/**
+            **/.claude/**
+            **/*.pdf
