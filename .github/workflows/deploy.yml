@@ -24,7 +24,7 @@ jobs:
           server: kurekcuk.ftp.dhosting.pl
           username: uyoo4u_kurekfoo
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /kurek-food.com/public_html/
+          server-dir: /public_html/
           exclude: |
             **/.git*
             **/.git*/**
